@@ -1,0 +1,144 @@
+﻿@{
+    Layout = null;
+}
+
+
+<!--Link Section-->
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<link href="~/Scripts/Newjs/FormCSS.css" rel="stylesheet" />
+<div class="container" id="container">
+    <div class="form-container sign-up-container">
+        <form>
+            <h1>Contact US</h1>
+            <div class="social-container">
+                <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>"We're just a message away – let's connect!"</span>
+            <input type="text" placeholder="Name" />
+            <input type="email" placeholder="Email" />
+            <input type="text" placeholder="Ask any thing.." />
+            <button><i class="fa fa-check"> </i>  Submit</button>
+        </form>
+    </div>
+    <div class="form-container sign-in-container">
+        <form id="searchForm">
+            <h1>Json Path</h1>
+            <div class="social-container">
+                <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                <a href="#" class="social"><i class="fab fa-instagram"></i></a>
+            </div>
+            <input type="text" placeholder="Json Data" id="JsonData" required />
+            <input type="text" placeholder="Value to be found" id="Value" required />
+            <a href="#">Note: Search For Complete Value?</a>
+            <br />
+            <input type="text" id="hiddenValue" style="display: none;" />
+            <button type="submit"><i class="fa fa-search"></i> Search</button>
+        </form>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>Welcome Back!</h1>
+                <p>To keep connected with us please Fill with your personal info</p>
+                <button class="ghost" id="signIn"><i class="fa fa-arrow-left"></i> Back</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Friend!</h1>
+                <p>In Case of any Queries Please Contact US.</p>
+                <button class="ghost" id="signUp"><i class="fa fa-user-circle"></i> Contact</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Found Indexs Value</h4>
+            </div>
+            <div class="modal-body">
+                <ul id="parentNamesList"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="Closee">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer>
+    <p>
+        Created By <i class="fa fa-heart"></i>
+        <a target="_blank" href="#">New Tech Community</a>
+    </p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/Scripts/Newjs/FormJS.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+<script>
+    $("#searchForm").submit(function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        debugger;
+
+        var value = $("#Value").val();
+        var jsondata = $("#JsonData").val();
+        $.ajax({
+            url: '/Home/GetData', // URL to the controller action
+            type: 'POST', // HTTP request type
+            dataType: 'json', // Data type to expect in response
+            data: {
+                value: value,
+                jsondata: jsondata
+            },
+            success: function (data) {
+                // Handle the data returned from the server
+                console.log(data);
+
+                // Populate the modal with the list of found parent names
+                var parentNamesList = $("#parentNamesList");
+                parentNamesList.empty(); // Clear any previous entries
+
+                if (data.Found) {
+                    $.each(data.ParentNames, function (index, name) {
+                        parentNamesList.append("<li>" + name + "</li>");
+                    });
+
+                    // Show the modal
+                    $("#myModal").modal("show");
+                } else {
+                    // Display a message if no values were found
+                    parentNamesList.append("<li>No matching values found.</li>");
+                }
+                $("#myModal").modal("show");
+            },
+
+            error: function (error) {
+                // Handle errors
+                console.error(error);
+            }
+        });
+    });
+</script>
+
+<script>
+    $("#Closee").click(function (event) {
+        event.preventDefault(); // Prevent the default form submission
+        $("#myModal").modal("hide");
+    });
+</script>
+
+
